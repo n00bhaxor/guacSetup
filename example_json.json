@@ -1,0 +1,9 @@
+{
+	"guacamoleAdmin":"Your Guac Admin Username",
+	"guacamoleAdminPass":"You Guac Admin Password",
+	"guacamoleServer":"ServerIP or Hostname",
+	"xrdpPassword":"The password for your xrdp/xvnc user",
+	"sshKeyFile":"The private key file for your CLI/SSH connection",
+	"sshKeyPass":"The passphrase for your private key",
+	"tempDir":"Temp directory with trailing slash to store JSON files for guacamole operations, e.g. /tmp/jsons/"
+}
