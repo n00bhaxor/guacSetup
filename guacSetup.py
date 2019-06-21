@@ -70,7 +70,7 @@ def add_student_group(client,parentGroup, studentNumber,tempDir):
     return
 
 # Add a GUI connection (e.g. RDP)
-def add_gui_connection(client,studentGroup,studentNumber,xrdpPassword,tempDir):
+def add_gui_connection(client,studentGroup,studentNumber,xrdpPassword,tempDir,newIPAddr):
     # Get the group ID of the Student's group
     studentGroupParent = studentGroup + '-Student-' + str(studentNumber)
     parentGID = get_group_id(client,studentGroupParent)
@@ -88,7 +88,7 @@ def add_gui_connection(client,studentGroup,studentNumber,xrdpPassword,tempDir):
     f.write('  "security":"any",\n')
     f.write('  "password":"' + xrdpPassword + '",\n')
     f.write('  "username":"root",\n')
-    f.write('  "hostname":"10.10.' + str(studentNumber) + '.10"\n')
+    f.write('  "hostname":"' + newIPAddr + '"\n')
     f.write('  }\n')
     f.write('}\n')
     f.close()
@@ -100,7 +100,7 @@ def add_gui_connection(client,studentGroup,studentNumber,xrdpPassword,tempDir):
 
 # Add a CLI connection (e.g. SSH)
 # We use Kali linux, hence "Kali" in the connection name
-def add_cli_connection(client,studentGroup,studentNumber,sshKeyFile,sshKeyPass,tempDir):
+def add_cli_connection(client,studentGroup,studentNumber,sshKeyFile,sshKeyPass,tempDir,newIPAddr):
     studentGroupParent = studentGroup + '-Student-' + str(studentNumber)
     parentGID = get_group_id(client,studentGroupParent)
     SSHFile = tempDir + studentGroup + 'Student' + '-Kali-CLI-' + str(studentNumber) + '.json'
@@ -115,7 +115,7 @@ def add_cli_connection(client,studentGroup,studentNumber,sshKeyFile,sshKeyPass,t
     f.write('  "port":"22",\n')
     f.write('  "username":"student",\n')
     f.write('  "passphrase":"' + sshKeyPass + '",\n')
-    f.write('  "hostname":"10.10.' + str(studentNumber) + '.10",\n')
+    f.write('  "hostname":"' + newIPAddr + '",\n')
     privKeyFile = open(sshKeyFile, "r")
     privKeyData = privKeyFile.read()
     privKeyData = privKeyData.replace("\n", "\\n")
@@ -254,12 +254,19 @@ def main(groupName,numStudents,ipAddr,outFile,varsFile):
         add_group(client,groupName,tempDir)
 
     # Enter loop, create users, connection groups and connections for all users.
-    studentStart = 1
+    studentStart = int(ipAddr.split('.')[2])
     studentMax = studentStart + int(numStudents)
 
     while studentStart < studentMax:
         studentNum = studentStart
 
+        # Parse the IP address octets
+        oct1 = ipAddr.split('.')[0]
+        oct2 = ipAddr.split('.')[1]
+        oct4 = ipAddr.split('.')[3]
+
+        # Assemble the IP address
+        newIPAddr = oct1 + '.' + oct2 + '.' + str(studentStart) + '.' + oct4
         # Create the student Guacamole user name
         newStudent = add_user(client,groupName,studentNum,tempDir)
         save_student_info(outFile,newStudent)
@@ -268,8 +275,8 @@ def main(groupName,numStudents,ipAddr,outFile,varsFile):
         add_student_group(client,groupName,studentNum,tempDir)
 
         # add the kali gui and cli connections
-        add_gui_connection(client,groupName,studentNum,xrdpPassword,tempDir)
-        add_cli_connection(client,groupName,studentNum,sshKeyFile,sshKeyPass,tempDir)
+        add_gui_connection(client,groupName,studentNum,xrdpPassword,tempDir,newIPAddr)
+        add_cli_connection(client,groupName,studentNum,sshKeyFile,sshKeyPass,tempDir,newIPAddr)
 
         # Assign permissions to connections
         # First the Kali GUI connection
