@@ -1,6 +1,6 @@
 {
 	"guacamoleAdmin":"Your Guac Admin Username",
-	"guacamoleAdminPass":"You Guac Admin Password",
+	"guacamoleAdminPass":"Your Guac Admin Password",
 	"guacamoleServer":"ServerIP or Hostname",
 	"xrdpPassword":"The password for your xrdp/xvnc user",
 	"sshKeyFile":"The private key file for your CLI/SSH connection",
