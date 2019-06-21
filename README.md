@@ -1,10 +1,7 @@
 # guacSetup
 Script we use for enrichMinds to set up user connection groups in Guacamole.
 
-This is a customized script we use to set up our Guacamole connections for students.
-There is an overall connection group for the school/institution we're teaching at,
-and a connection sub-group for each student. This way we can control what students
-have access to, and we can keep the horseplay to a minimum, because kidz gonna kid.
+This is a customized script we use to set up our Guacamole connections for students. There is an overall connection group for the school/institution we're teaching at, and a connection sub-group for each student. This way we can control what students have access to, and we can keep the horseplay to a minimum, because kidz gonna kid.
 
 This script will create both a CLI and GUI connection to Kali Linux. Since we don't
 always need a GUI, we can cut back on bandwidth resources whenever possible.
