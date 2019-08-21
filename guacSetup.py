@@ -15,7 +15,6 @@ import guacapy
 import json
 import os
 import diceware
-from colorama import Fore, Back, Style
 import argparse
 from shutil import rmtree
 import sys
@@ -182,7 +181,8 @@ def get_perms(client,userName):
 
 def assign_perms(client,studentGroup,studentNumber,connectionName,tempDir):
 
-    # We'll need to connection group ID, and connection ID
+    # We'll need the groupID, connection group ID, and connection ID
+    myGroupId = get_group_id(client,studentGroup)
     connGroupName = studentGroup + '-Student-' + str(studentNumber)
     connGroupId = get_group_id(client,connGroupName)
     connId = get_conn_id(client,connectionName)
@@ -193,6 +193,22 @@ def assign_perms(client,studentGroup,studentNumber,connectionName,tempDir):
 
     userPerms = get_perms(client,myStudent)
     if connGroupId not in userPerms['connectionGroupPermissions'].keys():
+        # First give user permission to the GroupName
+        permFile = tempDir + groupName + "-perms.json"
+        f = open(permFile, "w")
+        f.write('[{\n')
+        f.write('"op":"add",\n')
+        f.write('"path":"/connectionGroupPermissions/' + myGroupId + '",\n')
+        f.write('"value":"READ"\n')
+        f.write('}]\n')
+        f.close()
+        f = open(permFile, "r")
+        permData = f.read()
+        permData = json.loads(permData)
+        client.grant_permission(myStudent, permData)
+
+
+
         # First give the user permissions to the connection Group
         permFile = tempDir + connGroupName + "-perms.json"
         f = open(permFile, "w")
@@ -293,7 +309,7 @@ def main(groupName,numStudents,ipAddr,outFile,varsFile):
     # uncomment if you think there's an issue w/ JSON creation
     rmtree(tempDir)
     print("\r\n")
-    print("Your Student User passwords have been saved to " + outfile + "\r\n")
+    print("Your Student User passwords have been saved to " + outFile + "\r\n")
     print("PLEASE PROTECT THIS INFORMATION APPROPRIATELY!\r\n")
 
 
